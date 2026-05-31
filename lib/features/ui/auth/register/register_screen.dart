@@ -136,8 +136,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               hintText: "confirm password",
                               hintStyle: AppStyles.light18HintText,
                               filledColor: AppColors.whiteColor,
-                              controller: viewModel.passwordController,
-                              validator: AppValidators.validatePassword,
+                              controller: viewModel.rePasswordController,
+                              validator: (value) {
+                                return AppValidators.validateConfirmPassword(value, viewModel.passwordController.text);
+                              },
                               suffixIcon: IconButton(
                                   onPressed: () {},
                                   icon: Icon(Icons.visibility_off)),
