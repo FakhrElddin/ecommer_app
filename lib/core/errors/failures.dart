@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-abstract class Failures {
+class Failures {
   String errorMessage;
 
   Failures({required this.errorMessage});
@@ -36,5 +36,7 @@ class ServerError extends Failures {
 }
 
 class NetworkError extends Failures {
-  NetworkError({required super.errorMessage});
+  NetworkError({
+    super.errorMessage = 'No Internet Connection, Please Check Your Network',
+  });
 }

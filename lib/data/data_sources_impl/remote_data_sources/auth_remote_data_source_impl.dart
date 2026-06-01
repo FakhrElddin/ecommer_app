@@ -45,17 +45,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           return Left(ServerError(errorMessage: registerResponse.message!));
         }
       } else {
-        return Left(
-          NetworkError(
-            errorMessage: 'No Internet Connection, Please Check Your Network',
-          ),
-        );
+        return Left(NetworkError());
       }
     } catch (e) {
-      if(e is DioException){
+      if (e is DioException) {
         return Left(ServerError.fromDioException(e));
       }
-      return Left(ServerError(errorMessage: e.toString()));
+      return Left(Failures(errorMessage: e.toString()));
     }
   }
 
@@ -71,10 +67,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           connectivityResult.contains(ConnectivityResult.wifi)) {
         var response = await apiManager.postData(
           endPoint: EndPoints.signInEndPoint,
-          data: {
-            "email": email,
-            "password": password,
-          }
+          data: {"email": email, "password": password},
         );
         var loginResponse = LoginResponseDm.fromJson(response.data);
         if (response.statusCode! >= 200 && response.statusCode! < 300) {
@@ -83,17 +76,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           return Left(ServerError(errorMessage: loginResponse.message!));
         }
       } else {
-        return Left(
-          NetworkError(
-            errorMessage: 'No Internet Connection, Please Check Your Network',
-          ),
-        );
+        return Left(NetworkError());
       }
     } catch (e) {
-      if(e is DioException){
+      if (e is DioException) {
         return Left(ServerError.fromDioException(e));
       }
-      return Left(ServerError(errorMessage: e.toString()));
+      return Left(Failures(errorMessage: e.toString()));
     }
   }
 }
