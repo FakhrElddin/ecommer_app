@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:ecommerce_app/core/api/api_manager.dart';
 import 'package:ecommerce_app/core/api/end_points.dart';
 import 'package:ecommerce_app/core/errors/failures.dart';
@@ -51,6 +52,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
       }
     } catch (e) {
+      if(e is DioException){
+        return Left(ServerError.fromDioException(e));
+      }
       return Left(ServerError(errorMessage: e.toString()));
     }
   }
@@ -86,6 +90,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
       }
     } catch (e) {
+      if(e is DioException){
+        return Left(ServerError.fromDioException(e));
+      }
       return Left(ServerError(errorMessage: e.toString()));
     }
   }
