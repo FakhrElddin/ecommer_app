@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:ecommerce_app/core/errors/failures.dart';
+import 'package:ecommerce_app/domain/entities/login_response_entity.dart.dart';
 import 'package:ecommerce_app/domain/entities/register_response_entity.dart';
 
 abstract class AuthRepository {
@@ -9,5 +10,10 @@ abstract class AuthRepository {
     required String password,
     required String rePassword,
     required String phone,
+  });
+
+  Future<Either<Failures, LoginResponseEntity>> login({
+    required String email,
+    required String password,
   });
 }
