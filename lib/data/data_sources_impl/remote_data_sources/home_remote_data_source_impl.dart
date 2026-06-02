@@ -1,0 +1,44 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:ecommerce_app/core/api/api_manager.dart';
+import 'package:ecommerce_app/core/api/end_points.dart';
+import 'package:ecommerce_app/core/errors/failures.dart';
+import 'package:ecommerce_app/data/model/categories_response_dm.dart';
+import 'package:ecommerce_app/domain/repositories/data_sources/remote_data_sources/home_remote_data_source.dart';
+import 'package:injectable/injectable.dart';
+
+@Injectable(as: HomeRemoteDataSource)
+class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
+  ApiManager apiManager;
+
+  HomeRemoteDataSourceImpl({required this.apiManager});
+
+  @override
+  Future<Either<Failures, CategoriesResponseDm>> getAllCategories() async {
+    try {
+      final List<ConnectivityResult> connectivityResult = await Connectivity()
+          .checkConnectivity();
+      if (connectivityResult.contains(ConnectivityResult.mobile) ||
+          connectivityResult.contains(ConnectivityResult.wifi)) {
+        var response = await apiManager.getData(
+          endPoint: EndPoints.getAllCategoriesEndPoint,
+        );
+        var categoriesResponse = CategoriesResponseDm.fromJson(response.data);
+        if(response.statusCode! >= 200 && response.statusCode! < 300){
+          return Right(categoriesResponse);
+        } else {
+          return Left(ServerError(errorMessage: categoriesResponse.message!));
+        }
+      } else {
+        return Left(NetworkError());
+      }
+    } catch (e) {
+      if(e is DioException){
+        return Left(ServerError.fromDioException(e));
+      } else {
+        return Left(Failures(errorMessage: e.toString()));
+      }
+    }
+  }
+}

@@ -14,14 +14,23 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../data/data_sources_impl/remote_data_sources/auth_remote_data_source_impl.dart'
     as _i159;
+import '../../data/data_sources_impl/remote_data_sources/home_remote_data_source_impl.dart'
+    as _i347;
 import '../../data/repositories_impl/auth_repository_impl.dart' as _i98;
+import '../../data/repositories_impl/home_repository_impl.dart' as _i474;
 import '../../domain/repositories/auth/auth_repository.dart' as _i660;
 import '../../domain/repositories/data_sources/remote_data_sources/auth_remote_data_source.dart'
     as _i327;
+import '../../domain/repositories/data_sources/remote_data_sources/home_remote_data_source.dart'
+    as _i934;
+import '../../domain/repositories/home/home_repository.dart' as _i262;
+import '../../domain/use_cases/get_all_categories_use_case.dart' as _i1057;
 import '../../domain/use_cases/login_use_case.dart' as _i471;
 import '../../domain/use_cases/register_use_case.dart' as _i479;
 import '../../features/ui/auth/login/cubit/login_cubit.dart' as _i209;
 import '../../features/ui/auth/register/cubit/register_cubit.dart' as _i547;
+import '../../features/ui/pages/home_screen/tabs/home_tab/cubit/home_tab_cubit.dart'
+    as _i843;
 import '../api/api_manager.dart' as _i1047;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -35,9 +44,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i327.AuthRemoteDataSource>(
       () => _i159.AuthRemoteDataSourceImpl(apiManager: gh<_i1047.ApiManager>()),
     );
+    gh.factory<_i934.HomeRemoteDataSource>(
+      () => _i347.HomeRemoteDataSourceImpl(apiManager: gh<_i1047.ApiManager>()),
+    );
     gh.factory<_i660.AuthRepository>(
       () => _i98.AuthRepositoryImpl(
         remoteDataSource: gh<_i327.AuthRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i262.HomeRepository>(
+      () => _i474.HomeRepositoryImpl(
+        remoteDataSource: gh<_i934.HomeRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i1057.GetAllCategoriesUseCase>(
+      () => _i1057.GetAllCategoriesUseCase(
+        homeRepository: gh<_i262.HomeRepository>(),
       ),
     );
     gh.factory<_i471.LoginUseCase>(
@@ -45,6 +67,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i479.RegisterUseCase>(
       () => _i479.RegisterUseCase(authRepository: gh<_i660.AuthRepository>()),
+    );
+    gh.factory<_i843.HomeTabCubit>(
+      () =>
+          _i843.HomeTabCubit(getAllCategoriesUseCase: gh<_i1057.GetAllCategoriesUseCase>()),
     );
     gh.factory<_i209.LoginCubit>(
       () => _i209.LoginCubit(loginUseCase: gh<_i471.LoginUseCase>()),
