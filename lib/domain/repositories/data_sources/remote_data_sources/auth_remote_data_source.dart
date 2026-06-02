@@ -1,0 +1,19 @@
+import 'package:dartz/dartz.dart';
+import 'package:ecommerce_app/core/errors/failures.dart';
+import 'package:ecommerce_app/domain/entities/login_response_entity.dart.dart';
+import 'package:ecommerce_app/domain/entities/register_response_entity.dart';
+
+abstract class AuthRemoteDataSource {
+  Future<Either<Failures, RegisterResponseEntity>> register({
+    required String name,
+    required String email,
+    required String password,
+    required String rePassword,
+    required String phone,
+  });
+
+  Future<Either<Failures, LoginResponseEntity>> login({
+    required String email,
+    required String password,
+  });
+}
