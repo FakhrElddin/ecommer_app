@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecommerce_app/domain/entities/categories_response_entity.dart';
+import 'package:ecommerce_app/domain/entities/categories_or_brands_response_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,7 +8,7 @@ import '../../../core/utils/app_colors.dart';
 class CategoryBrandItem extends StatelessWidget {
   const CategoryBrandItem({super.key, required this.dataEntity});
 
-  final CategoryDataEntity dataEntity;
+  final CategoryOrBrandsDataEntity dataEntity;
 
   @override
   Widget build(BuildContext context) {
