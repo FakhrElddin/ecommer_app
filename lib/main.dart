@@ -31,11 +31,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.loginRoute,
           routes: {
-            AppRoutes.loginRoute: (context) => LoginScreen(),
-            AppRoutes.registerRoute: (context) => RegisterScreen(),
+            AppRoutes.loginRoute: (context) => const LoginScreen(),
+            AppRoutes.registerRoute: (context) => const RegisterScreen(),
             AppRoutes.homeRoute: (context) => const HomeScreen(),
             AppRoutes.cartRoute: (context) => const CartScreen(),
-            AppRoutes.productRoute: (context) => ProductDetailsScreen(),
+            AppRoutes.productRoute: (context) => const ProductDetailsScreen(),
           },
           theme: AppTheme.lightTheme,
         );

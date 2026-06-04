@@ -9,14 +9,18 @@ import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_styles.dart';
 import '../../widgets/custom_badge.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  HomeScreenCubit viewModel = HomeScreenCubit();
 
   @override
   Widget build(BuildContext context) {
-    HomeScreenCubit viewModel = HomeScreenCubit();
     return BlocBuilder<HomeScreenCubit, HomeScreenStates>(
       bloc: viewModel,
       builder: (context, state) {

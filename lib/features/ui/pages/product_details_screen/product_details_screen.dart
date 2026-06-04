@@ -9,7 +9,7 @@ import '../../../../core/utils/app_styles.dart';
 import '../../widgets/product_slider.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  ProductDetailsScreen({super.key});
+  const ProductDetailsScreen({super.key});
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -96,7 +96,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       border: Border.all(
-                          color: AppColors.primaryColor.withOpacity(.3),
+                          color: AppColors.primaryColor.withValues(alpha: 0.3),
                           width: 1),
                       borderRadius: BorderRadius.circular(20.r),
                     ),
@@ -295,7 +295,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Text(
                         'Total price',
                         style: AppStyles.medium18Header.copyWith(
-                            color: AppColors.primaryColor.withOpacity(0.6)),
+                            color: AppColors.primaryColor.withValues(alpha: 0.6)),
                       ),
                       SizedBox(
                         height: 12.h,
