@@ -75,7 +75,7 @@ class ProductTabItem extends StatelessWidget {
                   fontSize: 12.sp,
                 ),
                 SizedBox(height: 2.h),
-                CustomTxt(text: productsDataEntity.slug ?? '', fontSize: 12.sp),
+                CustomTxt(text: productsDataEntity.description ?? '', fontSize: 12.sp),
                 SizedBox(height: 1.h),
                 Row(
                   children: [
