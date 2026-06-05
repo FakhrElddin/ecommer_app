@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:ecommerce_app/core/cache/shared_prefs_utils.dart';
 import 'package:ecommerce_app/core/di/di.dart';
+import 'package:ecommerce_app/core/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/utils/app_routes.dart';
@@ -11,14 +13,19 @@ import 'features/ui/pages/cart_screen/cart_screen.dart';
 import 'features/ui/pages/home_screen/home_screen.dart';
 import 'features/ui/pages/product_details_screen/product_details_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefsUtils.init();
+  var token = SharedPrefsUtils.getData(key: AppConstants.userToken);
   configureDependencies();
   Bloc.observer = MyBlocObserver();
-  runApp(MyApp());
+  runApp(MyApp(isTokenSaved: token != null ? true : false));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.isTokenSaved});
+
+  final bool? isTokenSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.loginRoute,
+          initialRoute: initialRoute(),
           routes: {
             AppRoutes.loginRoute: (context) => const LoginScreen(),
             AppRoutes.registerRoute: (context) => const RegisterScreen(),
@@ -41,5 +48,11 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  String initialRoute() {
+    return isTokenSaved == null || isTokenSaved == false
+        ? AppRoutes.loginRoute
+        : AppRoutes.homeRoute;
   }
 }
