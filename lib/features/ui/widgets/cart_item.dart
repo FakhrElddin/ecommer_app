@@ -9,17 +9,10 @@ import '../../../core/utils/app_colors.dart';
 import '../../../core/utils/app_routes.dart';
 import 'custom_txt.dart';
 
-class CartItem extends StatefulWidget {
+class CartItem extends StatelessWidget {
   const CartItem({super.key, required this.getProductsEntity});
 
   final GetProductsEntity getProductsEntity;
-
-  @override
-  State<CartItem> createState() => _CartItemState();
-}
-
-class _CartItemState extends State<CartItem> {
-  int itemCount = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +31,30 @@ class _CartItemState extends State<CartItem> {
           ),
           child: Row(
             children: [
-              _buildImageContainer(imageUrl: widget.getProductsEntity.product?.imageCover ?? ''),
+              _buildImageContainer(
+                imageUrl: getProductsEntity.product?.imageCover ?? '',
+              ),
               Expanded(
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 12.h,
+                  ),
                   child: Column(
                     children: [
                       _buildItemHeader(
-                        productName: widget.getProductsEntity.product?.title ?? '',
-                        productId: widget.getProductsEntity.product?.id ?? '',
+                        context: context,
+                        productName: getProductsEntity.product?.title ?? '',
+                        productId: getProductsEntity.product?.id ?? '',
                       ),
                       SizedBox(height: 5.h),
                       _buildItemDetails(),
                       SizedBox(height: 5.h),
                       _buildItemPrice(
-                        price: widget.getProductsEntity.price?.toDouble() ?? 0,
-                        count: widget.getProductsEntity.count?.toInt() ?? 0,
+                        context: context,
+                        price: getProductsEntity.price?.toDouble() ?? 0,
+                        count: getProductsEntity.count?.toInt() ?? 0,
+                        productId: getProductsEntity.product?.id ?? '',
                       ),
                     ],
                   ),
@@ -81,30 +81,32 @@ class _CartItemState extends State<CartItem> {
           fit: BoxFit.cover,
           imageUrl: imageUrl,
           placeholder: (context, url) => const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.yellowColor,
-            ),
+            child: CircularProgressIndicator(color: AppColors.yellowColor),
           ),
-          errorWidget: (context, url, error) => const Icon(
-            Icons.error,
-            color: AppColors.redColor,
-          ),
+          errorWidget: (context, url, error) =>
+              const Icon(Icons.error, color: AppColors.redColor),
         ),
       ),
     );
   }
 
-  Widget _buildItemHeader({required String productName, required String productId}) {
+  Widget _buildItemHeader({
+    required String productName,
+    required String productId,
+    required BuildContext context,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(right: 24.0),
-          child: CustomTxt(text: productName),
-        )),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 24.0),
+            child: CustomTxt(text: productName),
+          ),
+        ),
         InkWell(
           onTap: () {
-            CartCubit.get(context).deleteCartItem(productId: productId,);
+            CartCubit.get(context).deleteCartItem(productId: productId);
           },
           child: Icon(
             CupertinoIcons.delete,
@@ -119,10 +121,7 @@ class _CartItemState extends State<CartItem> {
   Widget _buildItemDetails() {
     return Row(
       children: [
-        CircleAvatar(
-          backgroundColor: AppColors.blackColor,
-          radius: 10.r,
-        ),
+        CircleAvatar(backgroundColor: AppColors.blackColor, radius: 10.r),
         SizedBox(width: 10.w),
         CustomTxt(
           text: "black | size 40",
@@ -133,7 +132,12 @@ class _CartItemState extends State<CartItem> {
     );
   }
 
-  Widget _buildItemPrice({required double price, required int count}) {
+  Widget _buildItemPrice({
+    required double price,
+    required int count,
+    required String productId,
+    required BuildContext context,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -142,12 +146,20 @@ class _CartItemState extends State<CartItem> {
           fontWeight: FontWeight.bold,
           fontSize: 18.sp,
         ),
-        _buildQuantityControl(count: count),
+        _buildQuantityControl(
+          count: count,
+          productId: productId,
+          context: context,
+        ),
       ],
     );
   }
 
-  Widget _buildQuantityControl({required int count}) {
+  Widget _buildQuantityControl({
+    required int count,
+    required String productId,
+    required BuildContext context,
+  }) {
     return Container(
       height: 50.h,
       decoration: BoxDecoration(
@@ -159,11 +171,11 @@ class _CartItemState extends State<CartItem> {
         children: [
           IconButton(
             onPressed: () {
-              if (itemCount > 1) {
-                setState(() {
-                  itemCount--;
-                });
-              }
+              int itemCount = count;
+              CartCubit.get(context).updateCartItemQuantity(
+                productId: productId,
+                count: itemCount-1,
+              );
             },
             icon: Icon(
               Icons.remove_circle_outline_rounded,
@@ -179,9 +191,11 @@ class _CartItemState extends State<CartItem> {
           ),
           IconButton(
             onPressed: () {
-              setState(() {
-                itemCount++;
-              });
+              int itemCount = count;
+              CartCubit.get(context).updateCartItemQuantity(
+                productId: productId,
+                count: itemCount+1,
+              );
             },
             icon: Icon(
               Icons.add_circle_outline_rounded,

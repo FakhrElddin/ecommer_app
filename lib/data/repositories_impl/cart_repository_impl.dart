@@ -21,7 +21,21 @@ class CartRepositoryImpl implements CartRepository {
   Future<Either<Failures, GetCartResponseEntity>> deleteItemFromCart({
     required String productId,
   }) async {
-    var either = await remoteDataSource.deleteItemFromCart(productId: productId);
+    var either = await remoteDataSource.deleteItemFromCart(
+      productId: productId,
+    );
+    return either.fold((error) => Left(error), (response) => Right(response));
+  }
+
+  @override
+  Future<Either<Failures, GetCartResponseEntity>> updateCartItemQuantity({
+    required String productId,
+    required int count,
+  }) async {
+    var either = await remoteDataSource.updateCartItemQuantity(
+      productId: productId,
+      count: count,
+    );
     return either.fold((error) => Left(error), (response) => Right(response));
   }
 }

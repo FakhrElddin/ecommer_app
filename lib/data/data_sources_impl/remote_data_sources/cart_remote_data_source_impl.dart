@@ -77,4 +77,40 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       }
     }
   }
+
+  @override
+  Future<Either<Failures, GetCartResponseDM>> updateCartItemQuantity({
+    required String productId,
+    required int count,
+  }) async {
+    try {
+      final List<ConnectivityResult> connectivityResult = await Connectivity()
+          .checkConnectivity();
+      if (connectivityResult.contains(ConnectivityResult.mobile) ||
+          connectivityResult.contains(ConnectivityResult.wifi)) {
+        var token = SharedPrefsUtils.getData(key: AppConstants.userToken);
+        var response = await apiManager.putData(
+          endPoint: '${EndPoints.getUserCartEndPoint}/$productId',
+          data: {
+            "count" : '$count',
+          },
+          headers: {'token': token},
+        );
+        var getCartResponse = GetCartResponseDM.fromJson(response.data);
+        if (response.statusCode! >= 200 && response.statusCode! < 300) {
+          return Right(getCartResponse);
+        } else {
+          return Left(ServerError(errorMessage: getCartResponse.message!));
+        }
+      } else {
+        return Left(NetworkError());
+      }
+    } catch (e) {
+      if (e is DioException) {
+        return Left(ServerError.fromDioException(e));
+      } else {
+        return Left(Failures(errorMessage: e.toString()));
+      }
+    }
+  }
 }
