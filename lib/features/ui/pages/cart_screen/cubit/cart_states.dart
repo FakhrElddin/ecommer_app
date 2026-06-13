@@ -18,3 +18,17 @@ final class GetCartItemsErrorState extends CartStates {
 
   GetCartItemsErrorState({required this.failure});
 }
+
+final class DeleteCartItemLoadingState extends CartStates {}
+
+final class DeleteCartItemSuccessState extends CartStates {
+  GetCartResponseEntity getCartResponseEntity;
+
+  DeleteCartItemSuccessState({required this.getCartResponseEntity});
+}
+
+final class DeleteCartItemErrorState extends CartStates {
+  Failures failure;
+
+  DeleteCartItemErrorState({required this.failure});
+}

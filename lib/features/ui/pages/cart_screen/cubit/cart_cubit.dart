@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/domain/use_cases/delete_item_from_cart_use_case.dart';
 import 'package:ecommerce_app/domain/use_cases/get_cart_items_use_case.dart';
 import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_states.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,17 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class CartCubit extends Cubit<CartStates> {
-  CartCubit({required this.getCartItemsUseCase}) : super(CartInitialState());
+  CartCubit({
+    required this.getCartItemsUseCase,
+    required this.deleteItemFromCartUseCase,
+  }) : super(CartInitialState());
   GetCartItemsUseCase getCartItemsUseCase;
+  DeleteItemFromCartUseCase deleteItemFromCartUseCase;
 
   int numberOfCartItems = 0;
 
-  static CartCubit get(BuildContext context) => BlocProvider.of<CartCubit>(context);
+  static CartCubit get(BuildContext context) =>
+      BlocProvider.of<CartCubit>(context);
 
   void getCartItems() async {
     emit(GetCartItemsLoadingState());
@@ -24,4 +30,13 @@ class CartCubit extends Cubit<CartStates> {
     });
   }
 
+  void deleteCartItem({required String productId}) async {
+    var either = await deleteItemFromCartUseCase.invoke(productId: productId);
+    either.fold((failure) => emit(DeleteCartItemErrorState(failure: failure)), (
+      response,
+    ) {
+      numberOfCartItems = response.numOfCartItems!.toInt();
+      return emit(GetCartItemsSuccessState(getCartResponseEntity: response));
+    });
+  }
 }

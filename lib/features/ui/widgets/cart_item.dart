@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/domain/entities/get_cart_response_entity.dart';
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +26,7 @@ class _CartItemState extends State<CartItem> {
     return InkWell(
       onTap: () {
         //todo: navigate to product detail screen
-        Navigator.pushNamed(context, AppRoutes.productRoute);
+        //Navigator.pushNamed(context, AppRoutes.productRoute);
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -46,6 +47,7 @@ class _CartItemState extends State<CartItem> {
                     children: [
                       _buildItemHeader(
                         productName: widget.getProductsEntity.product?.title ?? '',
+                        productId: widget.getProductsEntity.product?.id ?? '',
                       ),
                       SizedBox(height: 5.h),
                       _buildItemDetails(),
@@ -92,7 +94,7 @@ class _CartItemState extends State<CartItem> {
     );
   }
 
-  Widget _buildItemHeader({required String productName}) {
+  Widget _buildItemHeader({required String productName, required String productId}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -102,7 +104,7 @@ class _CartItemState extends State<CartItem> {
         )),
         InkWell(
           onTap: () {
-            // TODO: delete item from cart
+            CartCubit.get(context).deleteCartItem(productId: productId,);
           },
           child: Icon(
             CupertinoIcons.delete,
