@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_app/domain/entities/get_cart_response_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +9,9 @@ import '../../../core/utils/app_routes.dart';
 import 'custom_txt.dart';
 
 class CartItem extends StatefulWidget {
-  const CartItem({super.key});
+  const CartItem({super.key, required this.getProductsEntity});
+
+  final GetProductsEntity getProductsEntity;
 
   @override
   State<CartItem> createState() => _CartItemState();
@@ -34,18 +37,23 @@ class _CartItemState extends State<CartItem> {
           ),
           child: Row(
             children: [
-              _buildImageContainer(),
+              _buildImageContainer(imageUrl: widget.getProductsEntity.product?.imageCover ?? ''),
               Expanded(
                 child: Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
                   child: Column(
                     children: [
-                      _buildItemHeader(),
+                      _buildItemHeader(
+                        productName: widget.getProductsEntity.product?.title ?? '',
+                      ),
                       SizedBox(height: 5.h),
                       _buildItemDetails(),
                       SizedBox(height: 5.h),
-                      _buildItemPrice(),
+                      _buildItemPrice(
+                        price: widget.getProductsEntity.price?.toDouble() ?? 0,
+                        count: widget.getProductsEntity.count?.toInt() ?? 0,
+                      ),
                     ],
                   ),
                 ),
@@ -57,7 +65,7 @@ class _CartItemState extends State<CartItem> {
     );
   }
 
-  Widget _buildImageContainer() {
+  Widget _buildImageContainer({required String imageUrl}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
@@ -69,8 +77,7 @@ class _CartItemState extends State<CartItem> {
           width: 130.w,
           height: 145.h,
           fit: BoxFit.cover,
-          imageUrl:
-              "https://www.nike.sa/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dw42ccc9ea/nk/a9b/7/6/4/b/1/a9b764b1_834c_413e_aec2_f460112b2de6.jpg?sw=2000&sh=2000&sm=fit",
+          imageUrl: imageUrl,
           placeholder: (context, url) => const Center(
             child: CircularProgressIndicator(
               color: AppColors.yellowColor,
@@ -85,11 +92,14 @@ class _CartItemState extends State<CartItem> {
     );
   }
 
-  Widget _buildItemHeader() {
+  Widget _buildItemHeader({required String productName}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const CustomTxt(text: "NIKE AIR JORDAN"),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(right: 24.0),
+          child: CustomTxt(text: productName),
+        )),
         InkWell(
           onTap: () {
             // TODO: delete item from cart
@@ -114,28 +124,28 @@ class _CartItemState extends State<CartItem> {
         SizedBox(width: 10.w),
         CustomTxt(
           text: "black | size 40",
-          fontColor: AppColors.blackColor.withOpacity(0.4),
+          fontColor: AppColors.blackColor.withValues(alpha: 0.4),
           fontSize: 14.sp,
         ),
       ],
     );
   }
 
-  Widget _buildItemPrice() {
+  Widget _buildItemPrice({required double price, required int count}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CustomTxt(
-          text: "Egp 3,500",
+          text: "Egp $price",
           fontWeight: FontWeight.bold,
           fontSize: 18.sp,
         ),
-        _buildQuantityControl(),
+        _buildQuantityControl(count: count),
       ],
     );
   }
 
-  Widget _buildQuantityControl() {
+  Widget _buildQuantityControl({required int count}) {
     return Container(
       height: 50.h,
       decoration: BoxDecoration(
@@ -160,7 +170,7 @@ class _CartItemState extends State<CartItem> {
             ),
           ),
           CustomTxt(
-            text: "$itemCount",
+            text: "$count",
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
             fontColor: AppColors.whiteColor,

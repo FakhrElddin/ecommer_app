@@ -1,3 +1,5 @@
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_cubit.dart';
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_states.dart';
 import 'package:ecommerce_app/features/ui/pages/home_screen/cubit/home_screen_cubit.dart';
 import 'package:ecommerce_app/features/ui/pages/home_screen/cubit/home_screen_states.dart';
 import 'package:flutter/material.dart';
@@ -146,7 +148,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     alpha: 0.75),
                               ))),
                     ),
-                    const CustomAppBarBadge(count: 5)
+                    BlocBuilder<CartCubit, CartStates>(
+                      buildWhen: (previous, current) =>
+                      current is GetCartItemsSuccessState,
+                      builder: (context, state) {
+                        return CustomAppBarBadge(
+                          count: CartCubit.get(context).numberOfCartItems,
+                        );
+                      },
+                    ),
+
                   ],
                 ),
               ),

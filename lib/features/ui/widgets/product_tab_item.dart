@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/domain/entities/products_response_entity.dart';
+import 'package:ecommerce_app/features/ui/pages/home_screen/tabs/products_tab/cubit/products_tab_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -102,6 +103,7 @@ class ProductTabItem extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         //   todo add to cart
+                        ProductsTabCubit.get(context).addToCart(productId: productsDataEntity.id ?? '');
                       },
                       splashColor: Colors.transparent,
                       child: Icon(

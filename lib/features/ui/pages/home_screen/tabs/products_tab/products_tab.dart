@@ -1,5 +1,6 @@
-import 'package:ecommerce_app/core/di/di.dart';
 import 'package:ecommerce_app/core/utils/app_colors.dart';
+import 'package:ecommerce_app/core/utils/flutter_toast.dart';
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_cubit.dart';
 import 'package:ecommerce_app/features/ui/pages/home_screen/tabs/products_tab/cubit/products_tab_cubit.dart';
 import 'package:ecommerce_app/features/ui/pages/home_screen/tabs/products_tab/cubit/products_tab_state.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +15,28 @@ class ProductsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProductsTabCubit viewModel = getIt<ProductsTabCubit>();
-    return BlocBuilder<ProductsTabCubit, ProductsTabStates>(
-      bloc: viewModel..getAllProducts(),
+    return BlocConsumer<ProductsTabCubit, ProductsTabStates>(
+      buildWhen: (previous, current) {
+        return current is ProductsTabErrorState ||
+            current is ProductsTabSuccessState ||
+            current is ProductsTabLoadingState;
+      },
+      listener: (context, state) {
+        if (state is AddToCartSuccessState) {
+          CartCubit.get(context).getCartItems();
+          ToastMessage.toastMsg(
+            msg: 'Product Added Successfully.',
+            backgroundColor: AppColors.greenColor,
+            textColor: AppColors.whiteColor,
+          );
+        } else if (state is AddToCartErrorState) {
+          ToastMessage.toastMsg(
+            msg: state.failure.errorMessage,
+            backgroundColor: AppColors.redColor,
+            textColor: AppColors.whiteColor,
+          );
+        }
+      },
       builder: (context, state) {
         if (state is ProductsTabErrorState) {
           return Center(child: Text(state.failure.errorMessage));
@@ -42,7 +62,8 @@ class ProductsTab extends StatelessWidget {
                           Navigator.pushNamed(
                             context,
                             AppRoutes.productRoute,
-                            arguments: state.productsResponseEntity.data![index],
+                            arguments:
+                                state.productsResponseEntity.data![index],
                           );
                         },
                         child: ProductTabItem(
