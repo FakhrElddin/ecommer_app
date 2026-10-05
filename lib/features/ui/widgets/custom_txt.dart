@@ -18,8 +18,7 @@ class CustomTxt extends StatelessWidget {
       required this.text,
       this.fontColor,
       this.textStyle,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   @override
   Widget build(BuildContext context) {
