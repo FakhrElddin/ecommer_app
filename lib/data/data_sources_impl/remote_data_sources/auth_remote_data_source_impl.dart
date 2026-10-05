@@ -3,7 +3,9 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/core/api/api_manager.dart';
 import 'package:ecommerce_app/core/api/end_points.dart';
+import 'package:ecommerce_app/core/cache/shared_prefs_utils.dart';
 import 'package:ecommerce_app/core/errors/failures.dart';
+import 'package:ecommerce_app/core/utils/app_constants.dart';
 import 'package:ecommerce_app/data/model/login_response_dm.dart';
 import 'package:ecommerce_app/data/model/register_response_dm.dart';
 import 'package:ecommerce_app/domain/repositories/data_sources/remote_data_sources/auth_remote_data_source.dart';
@@ -40,6 +42,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
         var registerResponse = RegisterResponseDM.fromJson(response.data);
         if (response.statusCode! >= 200 && response.statusCode! < 300) {
+          await SharedPrefsUtils.saveData(
+            key: AppConstants.userToken,
+            value: registerResponse.token,
+          );
           return Right(registerResponse);
         } else {
           return Left(ServerError(errorMessage: registerResponse.message!));
@@ -71,6 +77,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
         var loginResponse = LoginResponseDm.fromJson(response.data);
         if (response.statusCode! >= 200 && response.statusCode! < 300) {
+          await SharedPrefsUtils.saveData(
+            key: AppConstants.userToken,
+            value: loginResponse.token,
+          );
           return Right(loginResponse);
         } else {
           return Left(ServerError(errorMessage: loginResponse.message!));

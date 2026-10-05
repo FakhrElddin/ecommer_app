@@ -1,6 +1,8 @@
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_cubit.dart';
+import 'package:ecommerce_app/features/ui/pages/cart_screen/cubit/cart_states.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../core/utils/app_colors.dart';
 import '../../widgets/cart_item.dart';
 import '../../widgets/custom_badge.dart';
@@ -13,23 +15,52 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: _customAppBar(context),
-        body: Column(
-          children: [
-            Expanded(
-                child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return const CartItem();
-              },
-            )),
-            _buildCheckOut(context, 15000),
-          ],
-        ));
+    return BlocBuilder<CartCubit, CartStates>(
+      builder: (context, state) {
+        if (state is GetCartItemsSuccessState) {
+          return Scaffold(
+            appBar: _customAppBar(context, numberOfCartItems: state.getCartResponseEntity.numOfCartItems!.toInt()),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.getCartResponseEntity.data!.products!
+                        .length,
+                    itemBuilder: (context, index) {
+                      return CartItem(
+                        getProductsEntity: state.getCartResponseEntity.data!
+                            .products![index],
+                      );
+                    },
+                  ),
+                ),
+                _buildCheckOut(context, state.getCartResponseEntity.data!.totalCartPrice!.toDouble()),
+              ],
+            ),
+          );
+        } else if (state is GetCartItemsErrorState) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                state.failure.errorMessage,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        } else {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryColor,
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 
-  Widget _buildCheckOut(BuildContext context, double price) {
+  Widget _buildCheckOut(BuildContext context, double price,) {
     return Padding(
       padding: EdgeInsets.only(bottom: 50.h, left: 16.w, right: 16.w),
       child: Row(
@@ -40,35 +71,39 @@ class CartScreen extends StatelessWidget {
               CustomTxt(text: "$price", fontWeight: FontWeight.bold),
             ],
           ),
-          SizedBox(
-            width: 30.w,
-          ),
+          SizedBox(width: 30.w),
           Expanded(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor),
-                  onPressed: () {
-                    //todo: navigate to payment section
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const CustomTxt(
-                          text: "Check Out", fontColor: AppColors.whiteColor),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: AppColors.whiteColor,
-                        size: 28.sp,
-                      ),
-                    ],
-                  )))
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+              ),
+              onPressed: () {
+                //todo: navigate to payment section
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const CustomTxt(
+                    text: "Check Out",
+                    fontColor: AppColors.whiteColor,
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: AppColors.whiteColor,
+                    size: 28.sp,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-PreferredSizeWidget _customAppBar(BuildContext context) {
+PreferredSizeWidget _customAppBar(BuildContext context,
+    {required int numberOfCartItems}) {
   return AppBar(
     surfaceTintColor: Colors.transparent,
     toolbarHeight: 50.h,
@@ -77,10 +112,15 @@ PreferredSizeWidget _customAppBar(BuildContext context) {
     title: const Text("Cart"),
     backgroundColor: Colors.transparent,
     foregroundColor: AppColors.primaryColor,
-    titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        fontSize: 24.sp,
-        fontWeight: FontWeight.w500,
-        color: AppColors.primaryColor),
+    titleTextStyle: Theme
+        .of(context)
+        .textTheme
+        .bodyMedium
+        ?.copyWith(
+      fontSize: 24.sp,
+      fontWeight: FontWeight.w500,
+      color: AppColors.primaryColor,
+    ),
     actions: [
       IconButton(
         padding: EdgeInsets.zero,
@@ -93,7 +133,7 @@ PreferredSizeWidget _customAppBar(BuildContext context) {
       ),
       Padding(
         padding: EdgeInsets.only(right: 16.w),
-        child: const CustomAppBarBadge(count: 5),
+        child: CustomAppBarBadge(count: numberOfCartItems),
       ),
     ],
   );

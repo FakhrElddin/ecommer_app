@@ -1,4 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ecommerce_app/core/cache/shared_prefs_utils.dart';
+import 'package:ecommerce_app/core/utils/app_constants.dart';
+import 'package:ecommerce_app/core/utils/app_routes.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,16 +18,21 @@ class UserTab extends StatefulWidget {
 }
 
 class _UserTabState extends State<UserTab> {
-  TextEditingController fullNameController =
-      TextEditingController(text: "Mohamed Mohamed Nabil");
-  TextEditingController emailController =
-      TextEditingController(text: "mohamed.N@gmail.com");
-  TextEditingController passwordController =
-      TextEditingController(text: "**********");
-  TextEditingController mobileController =
-      TextEditingController(text: "01122118855");
-  TextEditingController addressController =
-      TextEditingController(text: "6th October, street 11.....");
+  TextEditingController fullNameController = TextEditingController(
+    text: "Mohamed Mohamed Nabil",
+  );
+  TextEditingController emailController = TextEditingController(
+    text: "mohamed.N@gmail.com",
+  );
+  TextEditingController passwordController = TextEditingController(
+    text: "**********",
+  );
+  TextEditingController mobileController = TextEditingController(
+    text: "01122118855",
+  );
+  TextEditingController addressController = TextEditingController(
+    text: "6th October, street 11.....",
+  );
   bool fullNameReadOnly = true;
   bool emailReadOnly = true;
   bool passwordReadOnly = true;
@@ -39,21 +47,36 @@ class _UserTabState extends State<UserTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AutoSizeText(
-              "Welcome, Mohamed",
-              style: AppStyles.medium18Header,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    AutoSizeText(
+                      "Welcome, Mohamed",
+                      style: AppStyles.medium18Header,
+                    ),
+                    AutoSizeText(
+                      "mohamed.N@gmail.com",
+                      style: AppStyles.medium14LightPrimary,
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () {
+                    SharedPrefsUtils.removeData(key: AppConstants.userToken);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.loginRoute,
+                      (route) => false,
+                    );
+                  },
+                  icon: Icon(Icons.logout, color: AppColors.redColor),
+                ),
+              ],
             ),
-            AutoSizeText(
-              "mohamed.N@gmail.com",
-              style: AppStyles.medium14LightPrimary,
-            ),
-            SizedBox(
-              height: 40.h,
-            ),
-            AutoSizeText(
-              "Your full name",
-              style: AppStyles.medium18Header,
-            ),
+            SizedBox(height: 40.h),
+            AutoSizeText("Your full name", style: AppStyles.medium18Header),
             CustomTextFormField(
               isPassword: false,
               readonly: fullNameReadOnly,
@@ -61,17 +84,15 @@ class _UserTabState extends State<UserTab> {
               controller: fullNameController,
               borderColor: AppColors.primary30Opacity,
               suffixIcon: IconButton(
-                  onPressed: () {
-                    fullNameReadOnly = false;
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.edit)),
+                onPressed: () {
+                  fullNameReadOnly = false;
+                  setState(() {});
+                },
+                icon: const Icon(Icons.edit),
+              ),
               textStyle: AppStyles.medium14PrimaryDark,
             ),
-            AutoSizeText(
-              "Your E-mail",
-              style: AppStyles.medium18Header,
-            ),
+            AutoSizeText("Your E-mail", style: AppStyles.medium18Header),
             CustomTextFormField(
               readonly: emailReadOnly,
               isPassword: false,
@@ -79,17 +100,15 @@ class _UserTabState extends State<UserTab> {
               controller: emailController,
               borderColor: AppColors.primary30Opacity,
               suffixIcon: IconButton(
-                  onPressed: () {
-                    emailReadOnly = false;
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.edit)),
+                onPressed: () {
+                  emailReadOnly = false;
+                  setState(() {});
+                },
+                icon: const Icon(Icons.edit),
+              ),
               textStyle: AppStyles.medium14PrimaryDark,
             ),
-            AutoSizeText(
-              "Your password",
-              style: AppStyles.medium18Header,
-            ),
+            AutoSizeText("Your password", style: AppStyles.medium18Header),
             CustomTextFormField(
               isObscureText: true,
               readonly: passwordReadOnly,
@@ -98,17 +117,15 @@ class _UserTabState extends State<UserTab> {
               controller: passwordController,
               borderColor: AppColors.primary30Opacity,
               suffixIcon: IconButton(
-                  onPressed: () {
-                    passwordReadOnly = false;
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.edit)),
+                onPressed: () {
+                  passwordReadOnly = false;
+                  setState(() {});
+                },
+                icon: const Icon(Icons.edit),
+              ),
               textStyle: AppStyles.medium14PrimaryDark,
             ),
-            AutoSizeText(
-              "Your mobile number",
-              style: AppStyles.medium18Header,
-            ),
+            AutoSizeText("Your mobile number", style: AppStyles.medium18Header),
             CustomTextFormField(
               isPassword: false,
               readonly: mobileReadOnly,
@@ -116,17 +133,15 @@ class _UserTabState extends State<UserTab> {
               controller: mobileController,
               borderColor: AppColors.primary30Opacity,
               suffixIcon: IconButton(
-                  onPressed: () {
-                    mobileReadOnly = false;
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.edit)),
+                onPressed: () {
+                  mobileReadOnly = false;
+                  setState(() {});
+                },
+                icon: const Icon(Icons.edit),
+              ),
               textStyle: AppStyles.medium14PrimaryDark,
             ),
-            AutoSizeText(
-              "Your Address",
-              style: AppStyles.medium18Header,
-            ),
+            AutoSizeText("Your Address", style: AppStyles.medium18Header),
             CustomTextFormField(
               isPassword: false,
               readonly: addressReadOnly,
@@ -134,11 +149,12 @@ class _UserTabState extends State<UserTab> {
               controller: addressController,
               borderColor: AppColors.primary30Opacity,
               suffixIcon: IconButton(
-                  onPressed: () {
-                    addressReadOnly = false;
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.edit)),
+                onPressed: () {
+                  addressReadOnly = false;
+                  setState(() {});
+                },
+                icon: const Icon(Icons.edit),
+              ),
               textStyle: AppStyles.medium14PrimaryDark,
             ),
           ],
